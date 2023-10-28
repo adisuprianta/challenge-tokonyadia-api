@@ -1,31 +1,29 @@
 package com.enigma.challengetokonyadiaapi.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
-@Entity
-@Table(name = "m_user_credential")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Entity
+@Table(name = "m_store")
 @Builder(toBuilder = true)
-public class UserCredential {
+public class Store {
     @Id
     @GenericGenerator(name = "uuid",strategy = "uuid")
     @GeneratedValue(generator = "uuid")
     private String id;
-    @Column
-    private String email;
-    @Column
-    private String password;
 
-    @OneToOne(mappedBy = "userCredential",cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Customer customer;
-
+    @Column(name = "siup_number")
+    private String siupNumber;
+    @Column
+    private String name;
+    @Column
+    private String address;
+    @Column(name = "phone_number")
+    private String phoneNumber;
 }

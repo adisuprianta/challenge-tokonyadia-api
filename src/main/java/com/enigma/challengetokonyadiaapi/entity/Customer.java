@@ -2,10 +2,7 @@ package com.enigma.challengetokonyadiaapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -16,6 +13,7 @@ import javax.persistence.*;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder(toBuilder = true)
 public class Customer {
     @Id
     @GenericGenerator(name = "uuid",strategy = "uuid")
@@ -31,7 +29,7 @@ public class Customer {
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinColumn(name = "user_credential_id")
-    @JsonManagedReference
+    @JsonBackReference
     private UserCredential userCredential;
 
 }
