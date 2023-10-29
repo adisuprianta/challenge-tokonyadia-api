@@ -7,6 +7,9 @@ import com.enigma.challengetokonyadiaapi.repository.CustomerRepository;
 import com.enigma.challengetokonyadiaapi.service.CustomerService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -51,17 +54,32 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public List<CustomerResponse> findAll() {
-        List<Customer> all = customerRepository.findAll();
+    public Page<Customer> findAll(Integer page, Integer size) {
+        try {
+            PageRequest pageRequest = PageRequest.of(page, size);
+            Page<Customer> customerPage = customerRepository.findAll(pageRequest);
 
-        return all.stream().map(customer -> {
-            return CustomerResponse.builder()
-                    .phoneNumber(customer.getPhoneNumber())
-                    .id(customer.getId())
-                    .name(customer.getName())
-                    .address(customer.getAddress())
-                    .build();
-        }).collect(Collectors.toList());
+            //coba coba page ke list 
+            List <CustomerResponse> responses = customerPage.getContent().stream()
+                    .map(customer -> {
+                        return CustomerResponse.builder()
+                                .name(customer.getName())
+                                .build();
+                    }).collect(Collectors.toList());
+
+//        return all.stream().map(customer -> {
+//            return CustomerResponse.builder()
+//                    .phoneNumber(customer.getPhoneNumber())
+//                    .id(customer.getId())
+//                    .name(customer.getName())
+//                    .address(customer.getAddress())
+//                    .build();
+//        }).collect(Collectors.toList());
+            return customerPage;
+        }catch (IllegalArgumentException exception){
+            throw new IllegalArgumentException("The page index cannot be zero");
+        }
+
     }
 
 
