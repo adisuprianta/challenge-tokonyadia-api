@@ -114,6 +114,9 @@ public class TransactionServiceImpl implements TransactionService {
         return saveTrans.getTransactionDetails()
                 .stream().map(t -> {
                     Integer stock = t.getProduct().getStock() - t.getQuantity();
+                    if(stock<=0){
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Stock cannot zero");
+                    }
                     t.getProduct().setStock(stock);
                     productService.udpate(t.getProduct());
                     t.setTransaction(saveTrans);
