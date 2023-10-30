@@ -1,9 +1,11 @@
 package com.enigma.challengetokonyadiaapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Setter
 @Getter
@@ -26,4 +28,8 @@ public class Store {
     private String address;
     @Column(name = "phone_number")
     private String phoneNumber;
+
+    @OneToMany(mappedBy = "store",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Product> products;
 }

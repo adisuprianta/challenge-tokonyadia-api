@@ -58,7 +58,7 @@ public class CustomerController {
             @RequestParam(name = "size",required = false,defaultValue = "10") Integer size
     ){
 //karena page mulai dari 0 dimana sama kayak index di array makanya page -1
-        Page<Customer> customerPage = customerService.findAll(page-1, size);
+        Page<CustomerResponse> customerPage = customerService.findAll(page-1, size);
         return ResponseEntity.status(HttpStatus.OK).body(
                 PagingResponse.builder()
                         .currentPage(page)

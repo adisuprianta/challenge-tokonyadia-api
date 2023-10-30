@@ -10,7 +10,7 @@ import java.util.List;
 public interface CustomerService {
     CustomerResponse save(Customer customer);
     CustomerResponse update(CustomerRequest request);
-    Page<Customer> findAll(Integer page, Integer size);
+    Page<CustomerResponse> findAll(Integer page, Integer size);
 
     CustomerResponse findById(String id);
     void delete(String id);

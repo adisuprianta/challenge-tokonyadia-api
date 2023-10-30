@@ -8,12 +8,14 @@ import com.enigma.challengetokonyadiaapi.service.CustomerService;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -54,7 +56,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<Customer> findAll(Integer page, Integer size) {
+    public Page<CustomerResponse> findAll(Integer page, Integer size) {
         try {
             PageRequest pageRequest = PageRequest.of(page, size);
             Page<Customer> customerPage = customerRepository.findAll(pageRequest);
@@ -75,7 +77,7 @@ public class CustomerServiceImpl implements CustomerService {
 //                    .address(customer.getAddress())
 //                    .build();
 //        }).collect(Collectors.toList());
-            return customerPage;
+            return new PageImpl<>(responses,pageRequest,customerPage.getTotalElements());
         }catch (IllegalArgumentException exception){
             throw new IllegalArgumentException("The page index cannot be zero");
         }
@@ -97,6 +99,7 @@ public class CustomerServiceImpl implements CustomerService {
                 .build();
     }
 
+//    @Transactional(rollbackOn = Exception.class)
     @Override
     public void delete(String id) {
         Customer customer = customerRepository.findById(id).orElseThrow(() ->
