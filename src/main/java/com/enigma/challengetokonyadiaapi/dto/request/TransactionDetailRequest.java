@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class TransactionDetailRequest {
     private String productId;
     private Integer qty;
-    private Long price;
+//    private Long price;
 }

@@ -33,10 +33,10 @@ public class TransactionServiceImpl implements TransactionService {
     @Transactional(rollbackOn = Exception.class)
     public TransactionResponse save(TransactionRequest request) {
         CustomerResponse customerResponse = customerService.findById(request.getCustomerId());
-        List<TransactionDetail> transactionDetails = request.getTransactionDetails().stream().map(t -> {
+        List<TransactionDetail> transactionDetails = request.getProduct().stream().map(t -> {
                     Product product = productService.getById(t.getProductId());
                     return TransactionDetail.builder()
-                            .price(t.getPrice())
+                            .price(product.getPrice())
                             .quantity(t.getQty())
                             .product(product)
                             .build();
@@ -67,6 +67,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .product(detailResponses)
                 .build();
     }
+
 
     @Override
     public TransactionResponse getById(String id) {

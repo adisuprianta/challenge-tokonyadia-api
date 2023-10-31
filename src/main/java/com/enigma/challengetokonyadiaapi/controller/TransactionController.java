@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -16,6 +17,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
+    @GetMapping(path = "/date")
+    public Date date(){
+
+        return new Date();
+    }
 
     @PostMapping
     public ResponseEntity<?> save(@RequestBody TransactionRequest request) {
