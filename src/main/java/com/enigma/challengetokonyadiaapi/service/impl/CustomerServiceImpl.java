@@ -94,7 +94,10 @@ public class CustomerServiceImpl implements CustomerService {
             List <CustomerResponse> responses = customerPage.getContent().stream()
                     .map(customer -> {
                         return CustomerResponse.builder()
+                                .id(customer.getId())
                                 .name(customer.getName())
+                                .address(customer.getAddress())
+                                .phoneNumber(customer.getPhoneNumber())
                                 .build();
                     }).collect(Collectors.toList());
 

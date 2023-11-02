@@ -57,6 +57,7 @@ public class CustomerController {
                         .data(response)
                         .build());
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> findAll(
             @RequestParam(name = "page", required = false,defaultValue = "1") Integer page,

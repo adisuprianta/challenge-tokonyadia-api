@@ -2,6 +2,8 @@ package com.enigma.challengetokonyadiaapi.dto.response;
 
 import lombok.*;
 
+import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
@@ -14,5 +16,6 @@ public class CustomerResponse {
     private String phoneNumber;
 
     private String address;
+    private Date date;
 
 }
