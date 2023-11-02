@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "m_customer")
@@ -19,12 +20,14 @@ public class Customer {
     @GenericGenerator(name = "uuid",strategy = "uuid")
     @GeneratedValue(generator = "uuid")
     private  String  id;
-    @Column(name = "name",nullable = false)
+    @Column(name = "name")
     private String name;
-    @Column(nullable = false,name = "phone_number")
+    @Column(name = "phone_number")
     private String phoneNumber;
     @Column(name = "address")
     private String address;
+    @Column
+    private Date bod;
 
 
     @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)

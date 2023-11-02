@@ -6,29 +6,31 @@ import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 @Entity
-@Table(name = "m_user_credential")
+@Table(name = "m_seller")
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder(toBuilder = true)
-public class UserCredential {
+public class Seller {
     @Id
     @GenericGenerator(name = "uuid",strategy = "uuid")
     @GeneratedValue(generator = "uuid")
-    private String id;
-    @Column
-    private String username;
-    @Column
-    private String password;
+    private  String  id;
+    @Column(name = "name")
+    private String name;
+    @Column(name = "phone_number")
+    private String phoneNumber;
+    @Column(name = "address")
+    private String address;
 
-    @OneToOne(mappedBy = "userCredential",cascade = CascadeType.ALL)
-    @JsonManagedReference
-    private Customer customer;
 
-    @ManyToOne
-    private Role role;
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinColumn(name = "user_credential_id")
+    @JsonBackReference
+    private UserCredential userCredential;
 
 }

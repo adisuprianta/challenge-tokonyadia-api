@@ -1,6 +1,7 @@
 package com.enigma.challengetokonyadiaapi.service.impl;
 
 import com.enigma.challengetokonyadiaapi.dto.request.CustomerRequest;
+import com.enigma.challengetokonyadiaapi.dto.request.SearchCustomerRequest;
 import com.enigma.challengetokonyadiaapi.dto.response.CustomerResponse;
 import com.enigma.challengetokonyadiaapi.entity.Customer;
 import com.enigma.challengetokonyadiaapi.repository.CustomerRepository;
@@ -11,11 +12,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -56,9 +63,31 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public Page<CustomerResponse> findAll(Integer page, Integer size) {
+    public Page<CustomerResponse> findAll(SearchCustomerRequest request) {
         try {
-            PageRequest pageRequest = PageRequest.of(page, size);
+            Specification<Customer> specification = (root,query,criteriaBuilder)->{
+                List<Predicate> predicates = new ArrayList<>();
+                if(request.getName()!=null){
+                    Predicate predicate =  criteriaBuilder.like(
+                            criteriaBuilder.lower(root.get("name")),
+                            "%"+request.getName().toLowerCase()+"%"
+                    );
+                    predicates.add(predicate);
+                }
+                if (request.getMaxBod()!=null){
+                    predicates.add(
+                            criteriaBuilder.lessThanOrEqualTo(root.get("bod"),request.getMaxBod())
+                    );
+                }
+                if (request.getMinBod()!=null){
+                    predicates.add(
+                            criteriaBuilder.greaterThanOrEqualTo(root.get("bod"),request.getMinBod())
+                    );
+                }
+                return query.where(predicates.toArray(new Predicate[]{})).getRestriction();
+
+            };
+            PageRequest pageRequest = PageRequest.of(request.getPage(), request.getSize());
             Page<Customer> customerPage = customerRepository.findAll(pageRequest);
 
             //coba coba page ke list 
@@ -86,17 +115,12 @@ public class CustomerServiceImpl implements CustomerService {
 
 
     @Override
-    public CustomerResponse findById(String id) {
-        Customer customer = customerRepository.findById(id).orElseThrow(() ->
+    public Customer findById(String id) {
+        return customerRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "customer tidak ada")
         );
 
-        return CustomerResponse.builder()
-                .id(customer.getId())
-                .address(customer.getAddress())
-                .name(customer.getName())
-                .phoneNumber(customer.getPhoneNumber())
-                .build();
+
     }
 
 //    @Transactional(rollbackOn = Exception.class)

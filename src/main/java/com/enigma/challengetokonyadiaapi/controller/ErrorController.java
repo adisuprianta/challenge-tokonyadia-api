@@ -7,15 +7,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.validation.ConstraintViolationException;
+
 @RestControllerAdvice
 public class ErrorController {
 
-    @ExceptionHandler(ResponseStatusException.class)
+    @ExceptionHandler({ResponseStatusException.class})
     public ResponseEntity<?> apiError(ResponseStatusException e){
         return ResponseEntity.status(e.getStatus())
                 .body(CommonResponse.builder()
                         .statusCode(e.getStatus().value())
-                        .message(e.getMessage())
+                        .message(e.getReason())
                         .build()
                 );
     }
@@ -27,5 +29,15 @@ public class ErrorController {
                         .message(e.getMessage())
                         .build()
                 );
+    }
+    @ExceptionHandler({ConstraintViolationException.class})
+    public ResponseEntity<?> constraintViolationException(ConstraintViolationException e) {
+        CommonResponse<?> response = CommonResponse.builder()
+                .statusCode(HttpStatus.BAD_REQUEST.value())
+                .message(e.getMessage())
+                .build();
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(response);
     }
 }

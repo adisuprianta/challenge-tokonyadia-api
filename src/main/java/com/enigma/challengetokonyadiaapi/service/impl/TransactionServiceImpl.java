@@ -32,7 +32,7 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional(rollbackOn = Exception.class)
     public TransactionResponse save(TransactionRequest request) {
-        CustomerResponse customerResponse = customerService.findById(request.getCustomerId());
+        Customer customer= customerService.findById(request.getCustomerId());
         List<TransactionDetail> transactionDetails = request.getProduct().stream().map(t -> {
                     Product product = productService.getById(t.getProductId());
                     return TransactionDetail.builder()
@@ -43,11 +43,11 @@ public class TransactionServiceImpl implements TransactionService {
 
                 })
                 .collect(Collectors.toList());
-        Customer customer = Customer.builder()
-                .id(customerResponse.getId())
-                .name(customerResponse.getName())
-                .address(customerResponse.getAddress())
-                .phoneNumber(customerResponse.getPhoneNumber())
+        CustomerResponse customerResponse = CustomerResponse.builder()
+                .id(customer.getId())
+                .address(customer.getAddress())
+                .name(customer.getName())
+                .phoneNumber(customer.getPhoneNumber())
                 .build();
 
         Transaction transaction = Transaction.builder()

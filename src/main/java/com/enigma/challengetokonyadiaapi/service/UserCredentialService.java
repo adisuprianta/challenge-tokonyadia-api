@@ -1,11 +1,9 @@
 package com.enigma.challengetokonyadiaapi.service;
 
-import com.enigma.challengetokonyadiaapi.dto.request.CustomerRequest;
-import com.enigma.challengetokonyadiaapi.dto.request.UserCredentialRequest;
-import com.enigma.challengetokonyadiaapi.dto.response.CustomerResponse;
-import com.enigma.challengetokonyadiaapi.dto.response.UserCredentialResponse;
+import com.enigma.challengetokonyadiaapi.entity.AppUser;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface UserCredentialService {
-    UserCredentialResponse save(UserCredentialRequest request);
+public interface UserCredentialService extends UserDetailsService {
+    AppUser loadById(String id);
 
 }
