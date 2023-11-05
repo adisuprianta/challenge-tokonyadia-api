@@ -1,6 +1,7 @@
 package com.enigma.challengetokonyadiaapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -33,4 +35,7 @@ public class Product {
     private Long price;
     @Column
     private Integer stock;
+    @OneToMany(mappedBy = "product",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ProductImage> productImages;
 }

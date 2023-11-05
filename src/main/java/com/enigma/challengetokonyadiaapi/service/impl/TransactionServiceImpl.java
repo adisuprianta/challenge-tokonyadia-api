@@ -1,7 +1,9 @@
 package com.enigma.challengetokonyadiaapi.service.impl;
 
+import com.enigma.challengetokonyadiaapi.dto.request.ProductRequest;
 import com.enigma.challengetokonyadiaapi.dto.request.TransactionRequest;
 import com.enigma.challengetokonyadiaapi.dto.response.CustomerResponse;
+import com.enigma.challengetokonyadiaapi.dto.response.ProductResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.TransactionDetailResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.TransactionResponse;
 import com.enigma.challengetokonyadiaapi.entity.Customer;
@@ -34,7 +36,7 @@ public class TransactionServiceImpl implements TransactionService {
     public TransactionResponse save(TransactionRequest request) {
         Customer customer= customerService.findById(request.getCustomerId());
         List<TransactionDetail> transactionDetails = request.getProduct().stream().map(t -> {
-                    Product product = productService.getById(t.getProductId());
+                    Product product =productService.getById(t.getProductId());
                     return TransactionDetail.builder()
                             .price(product.getPrice())
                             .quantity(t.getQty())
@@ -119,7 +121,14 @@ public class TransactionServiceImpl implements TransactionService {
                         throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Stock cannot zero");
                     }
                     t.getProduct().setStock(stock);
-                    productService.udpate(t.getProduct());
+                    ProductRequest productRequest = ProductRequest.builder()
+                            .id(t.getProduct().getId())
+                            .stock(t.getProduct().getStock())
+                            .description(t.getProduct().getDescription())
+                            .price(t.getProduct().getPrice())
+                            .name(t.getProduct().getName())
+                            .build();
+                    productService.udpate(productRequest);
                     t.setTransaction(saveTrans);
                     return TransactionDetailResponse.builder()
                             .productName(t.getProduct().getName())
