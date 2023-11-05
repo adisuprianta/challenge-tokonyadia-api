@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -21,4 +22,5 @@ public class ProductResponse {
     private String description;
     private Long price;
     private Integer stock;
+    private List<FileResponse> fileResponses;
 }

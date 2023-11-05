@@ -24,7 +24,7 @@ public class ProductImage {
     private String contentType;
     private String path;
     private Long size;
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "product_id")
     @JsonBackReference
     private Product product;

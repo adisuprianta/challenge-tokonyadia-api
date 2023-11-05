@@ -9,6 +9,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -62,6 +63,36 @@ public class ProductImageServiceImpl implements ProductImageService {
 
     @Override
     public void deleteFile(String path) {
+        try{
+         Path filePath = Paths.get(path);
+         Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
+    @Transactional(readOnly = true)
+    @Override
+    public Resource getMenuImageById(String id) {
+        try {
+
+            ProductImage productImage = productImageRepository.getReferenceById(id);
+            Path filepath = Paths.get(productImage.getPath());
+            return new UrlResource(filepath.toUri());
+        } catch (MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void delete(String id) {
+        try{
+            ProductImage productImage = productImageRepository.getReferenceById(id);
+            productImageRepository.delete(productImage);
+            Path filePath = Paths.get(productImage.getPath());
+            Files.deleteIfExists(filePath);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

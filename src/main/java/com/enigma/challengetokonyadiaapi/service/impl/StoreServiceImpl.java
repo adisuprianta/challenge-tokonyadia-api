@@ -53,6 +53,13 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
+    public Store getById(String id) {
+        return  storeRepository.findById(id).orElseThrow(()->
+                new ResponseStatusException(HttpStatus.NOT_FOUND,"Store Not Found")
+        );
+    }
+
+    @Override
     public List<StoreResponse> findAll() {
         List<Store> stores = storeRepository.findAll();
 

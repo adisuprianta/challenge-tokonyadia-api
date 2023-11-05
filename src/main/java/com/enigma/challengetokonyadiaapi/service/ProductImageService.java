@@ -9,4 +9,6 @@ public interface ProductImageService {
     ProductImage createImage(MultipartFile multipartFile);
     Resource findByPath(String path);
     void deleteFile(String path);
+    Resource getMenuImageById(String id);
+    void delete(String id);
 }

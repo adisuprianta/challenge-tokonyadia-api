@@ -23,7 +23,7 @@ public class Product {
     @GeneratedValue(generator = "uuid")
     private String id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "store_id")
     @JsonBackReference
     private Store store;
