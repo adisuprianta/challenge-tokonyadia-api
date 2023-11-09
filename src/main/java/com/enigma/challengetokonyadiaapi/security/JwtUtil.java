@@ -6,6 +6,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.enigma.challengetokonyadiaapi.constant.ERole;
+import com.enigma.challengetokonyadiaapi.dto.response.TokenResponse;
 import com.enigma.challengetokonyadiaapi.entity.AppUser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,9 +33,10 @@ public class JwtUtil {
     public String generateToken(AppUser appUser){
         try {
             Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes(StandardCharsets.UTF_8));
+            log.info(appUser.getId());
             return JWT.create().withIssuer(appName)
                     .withSubject(appUser.getId())
-                    .withClaim("role",appUser.getRole().name())
+                    .withClaim("role",appUser.getRoles().toString())
                     .withExpiresAt(Instant.now().plusSeconds(jwtExpirationInSecond))
                     .withIssuedAt(Instant.now())
                     .sign(algorithm);
@@ -57,18 +60,22 @@ public class JwtUtil {
         }
     }
 
-    public Map<String, String> getUserInfoByToken(String token) {
+    public TokenResponse getUserInfoByToken(String token) {
         try {
             Algorithm algorithm = Algorithm.HMAC256(jwtSecret.getBytes(StandardCharsets.UTF_8));
             JWTVerifier verifier = JWT.require(algorithm).build();
             DecodedJWT decodedJWT = verifier.verify(token);
+            log.info(decodedJWT.getSubject());
+            return TokenResponse.builder()
+                    .userId(decodedJWT.getSubject())
+                    .roles(decodedJWT.getClaim("role").asList(ERole.class))
+                    .build();
+//            Map<String, String> userInfo = new HashMap<>();
+//            userInfo.put("userId", decodedJWT.getSubject());
+//            userInfo.put("role", decodedJWT.getClaim("role").asString());
 
-            Map<String, String> userInfo = new HashMap<>();
-            userInfo.put("userId", decodedJWT.getSubject());
-            userInfo.put("role", decodedJWT.getClaim("role").asString());
-
-            return userInfo;
-        } catch (JWTVerificationException e) {
+//            return userInfo;
+        } catch (Exception e) {
             log.error("invalid verification JWT: {}", e.getMessage());
             return null;
         }

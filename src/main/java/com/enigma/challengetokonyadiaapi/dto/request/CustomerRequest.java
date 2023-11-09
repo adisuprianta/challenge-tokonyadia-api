@@ -7,7 +7,7 @@ import lombok.*;
 import javax.persistence.Column;
 
 
-@Getter
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString

@@ -14,5 +14,4 @@ public class StoreRequest {
     private String siupNumber;
     private String name;
     private String address;
-    private String phoneNumber;
 }

@@ -31,6 +31,7 @@ public class SecurityConfiguration {
                 .authenticationEntryPoint(authEntryPoint)
                 .and().authorizeRequests()
                 .antMatchers(HttpMethod.POST,"/api/auth/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/auth/**").permitAll()
                 .anyRequest().authenticated()
                 .and().addFilterBefore(authTokenFillter, UsernamePasswordAuthenticationFilter.class)
                 .build();

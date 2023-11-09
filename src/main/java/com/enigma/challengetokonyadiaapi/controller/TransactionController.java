@@ -7,6 +7,7 @@ import com.enigma.challengetokonyadiaapi.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -17,12 +18,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class TransactionController {
     private final TransactionService transactionService;
-    @GetMapping(path = "/date")
-    public Date date(){
 
-        return new Date();
-    }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping
     public ResponseEntity<?> save(@RequestBody TransactionRequest request) {
         TransactionResponse response = transactionService.save(request);
@@ -33,6 +31,7 @@ public class TransactionController {
                         .data(response)
                         .build());
     }
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> findByid(@PathVariable String id){
         TransactionResponse response = transactionService.getById(id);
@@ -43,6 +42,7 @@ public class TransactionController {
                         .data(response)
                         .build());
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> findAll(){
         List<TransactionResponse> responses = transactionService.getAll();

@@ -7,27 +7,29 @@ import com.enigma.challengetokonyadiaapi.service.StoreService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "api/store")
+@RequestMapping(path = "/api/store")
 @RequiredArgsConstructor
 public class StoreController {
     private final StoreService storeService;
 
-    @PostMapping
-    public ResponseEntity<?> createNewStore(@RequestBody StoreRequest request){
-        StoreResponse response = storeService.save(request);
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.OK.value())
-                        .message("Successfully Create New Store")
-                        .data(response)
-                        .build()
-                );
-    }
+//    @PostMapping
+//    public ResponseEntity<?> createNewStore(@RequestBody StoreRequest request){
+//        StoreResponse response = storeService.save(request);
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .body(CommonResponse.builder()
+//                        .statusCode(HttpStatus.OK.value())
+//                        .message("Successfully Create New Store")
+//                        .data(response)
+//                        .build()
+//                );
+//    }
+    @PreAuthorize("hasAnyRole('SELLER')")
     @GetMapping(path = "/{id}")
     public ResponseEntity<?> findById(@PathVariable String id){
         StoreResponse response = storeService.findById(id);
@@ -39,6 +41,7 @@ public class StoreController {
                         .build()
                 );
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<?> findAll(){
         List<StoreResponse> responses = storeService.findAll();
@@ -50,6 +53,7 @@ public class StoreController {
                         .build()
                 );
     }
+    @PreAuthorize("hasAnyRole('CUSTOMER','SELLER')")
     @PutMapping
     public ResponseEntity<?> update(@RequestBody StoreRequest request){
         StoreResponse response = storeService.update(request);
@@ -61,6 +65,7 @@ public class StoreController {
                         .build()
                 );
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> delete(@PathVariable String id){
         storeService.delete(id);

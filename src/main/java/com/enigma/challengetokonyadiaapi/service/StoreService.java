@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface StoreService {
     StoreResponse save(StoreRequest request);
+    Store save(Store store);
     StoreResponse findById(String id);
     Store getById(String id);
     List<StoreResponse> findAll();

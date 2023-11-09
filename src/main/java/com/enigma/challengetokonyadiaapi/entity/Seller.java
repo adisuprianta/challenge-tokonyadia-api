@@ -27,10 +27,13 @@ public class Seller {
     @Column(name = "address")
     private String address;
 
-
-    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_credential_id")
-    @JsonBackReference
-    private UserCredential userCredential;
+//    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    @JoinColumn(name = "user_credential_id")
+//    @JsonBackReference
+//    private UserCredential userCredential;
+//
+//    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+//    @JsonManagedReference
+//    private Store store;
 
 }

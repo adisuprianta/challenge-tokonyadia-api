@@ -9,7 +9,7 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 public interface CustomerService {
-    CustomerResponse save(Customer customer);
+    Customer save(Customer customer);
     CustomerResponse update(CustomerRequest request);
     Page<CustomerResponse> findAll(SearchCustomerRequest request);
 

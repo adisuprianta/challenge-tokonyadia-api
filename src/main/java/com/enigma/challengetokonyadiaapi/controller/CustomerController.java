@@ -6,49 +6,60 @@ import com.enigma.challengetokonyadiaapi.dto.request.SearchCustomerRequest;
 import com.enigma.challengetokonyadiaapi.dto.response.CommonResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.CustomerResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.PagingResponse;
+import com.enigma.challengetokonyadiaapi.entity.AppUser;
 import com.enigma.challengetokonyadiaapi.entity.Customer;
 import com.enigma.challengetokonyadiaapi.entity.UserCredential;
 import com.enigma.challengetokonyadiaapi.repository.CustomerRepository;
 import com.enigma.challengetokonyadiaapi.repository.UserCredentialRepository;
+import com.enigma.challengetokonyadiaapi.security.JwtUtil;
 import com.enigma.challengetokonyadiaapi.service.CustomerService;
 import com.enigma.challengetokonyadiaapi.util.PagingUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
+import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping(path = "/api/customers")
+@Slf4j
 public class CustomerController {
     private  final CustomerService customerService;
-    @PostMapping
-    public ResponseEntity<?> createNewCustomer(@RequestBody CustomerRequest request){
-        Customer customer = Customer.builder()
-                .address(request.getAddress())
-                .name(request.getName())
-                .phoneNumber(request.getPhoneNumber()).build();
-        CustomerResponse response = customerService.save(customer);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(CommonResponse.builder()
-                        .statusCode(HttpStatus.CREATED.value())
-                        .message("Successfully Create New Customer")
-                        .data(response)
-                        .build());
-
-    }
-    @PreAuthorize("hasRole('USER')")
+//    @PostMapping
+//    public ResponseEntity<?> createNewCustomer(@RequestBody CustomerRequest request){
+//        Customer customer = Customer.builder()
+//                .address(request.getAddress())
+//                .name(request.getName())
+//                .phoneNumber(request.getPhoneNumber()).build();
+//        CustomerResponse response = customerService.save(customer);
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//                .body(CommonResponse.builder()
+//                        .statusCode(HttpStatus.CREATED.value())
+//                        .message("Successfully Create New Customer")
+//                        .data(response)
+//                        .build());
+//
+//    }
+    @PreAuthorize("hasRole('CUSTOMER')")
     @PutMapping
-    public ResponseEntity<?> updateCustomer(@RequestBody CustomerRequest request){
+    public ResponseEntity<?> updateCustomer(@RequestBody CustomerRequest request
+    ){
+
         CustomerResponse response = customerService.update(request);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(CommonResponse.builder()
@@ -113,6 +124,7 @@ public class CustomerController {
                         .data(response)
                         .build());
     }
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping(path = "/{id}")
     public ResponseEntity<?> delete(@PathVariable String id){
         customerService.delete(id);

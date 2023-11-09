@@ -3,6 +3,7 @@ package com.enigma.challengetokonyadiaapi.service.impl;
 import com.enigma.challengetokonyadiaapi.dto.request.CustomerRequest;
 import com.enigma.challengetokonyadiaapi.dto.request.SearchCustomerRequest;
 import com.enigma.challengetokonyadiaapi.dto.response.CustomerResponse;
+import com.enigma.challengetokonyadiaapi.entity.AppUser;
 import com.enigma.challengetokonyadiaapi.entity.Customer;
 import com.enigma.challengetokonyadiaapi.repository.CustomerRepository;
 import com.enigma.challengetokonyadiaapi.service.CustomerService;
@@ -14,6 +15,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -33,15 +36,8 @@ public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     @Override
-    public CustomerResponse save(Customer customer) {
-
-        customer = customerRepository.save(customer);
-        return  CustomerResponse.builder()
-                .id(customer.getId())
-                .name(customer.getName())
-                .phoneNumber(customer.getPhoneNumber())
-                .address(customer.getAddress())
-                .build();
+    public Customer save(Customer customer) {
+        return customerRepository.saveAndFlush(customer);
     }
 
     @Override
@@ -49,6 +45,11 @@ public class CustomerServiceImpl implements CustomerService {
         Customer customer = customerRepository.findById(request.getId()).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "customer tidak ada")
         );
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser principal = (AppUser) authentication.getPrincipal();
+        if (!principal.getId().equals(customer.getUserCredential().getId())) throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"cannot update customer");
+
+
         customer.setName(request.getName());
         customer.setAddress(request.getAddress());
         customer.setPhoneNumber(request.getPhoneNumber());

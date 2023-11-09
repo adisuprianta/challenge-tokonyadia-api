@@ -1,5 +1,6 @@
 package com.enigma.challengetokonyadiaapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
@@ -26,10 +27,12 @@ public class Store {
     private String name;
     @Column
     private String address;
-    @Column(name = "phone_number")
-    private String phoneNumber;
 
     @OneToMany(mappedBy = "store",cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<Product> products;
+    @OneToOne
+    @JoinColumn(name ="customer_id" )
+    @JsonBackReference
+    private Customer customer;
 }

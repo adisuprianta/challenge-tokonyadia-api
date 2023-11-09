@@ -1,5 +1,7 @@
 package com.enigma.challengetokonyadiaapi.security;
 
+import com.enigma.challengetokonyadiaapi.dto.response.TokenResponse;
+import com.enigma.challengetokonyadiaapi.entity.AppUser;
 import com.enigma.challengetokonyadiaapi.service.UserCredentialService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,10 +38,12 @@ public class AuthTokenFillter extends OncePerRequestFilter {
             }
 
             if (token!=null&&jwtUtil.verifyJwtToken(token)){
-                Map<String, String> userInfoByToken = jwtUtil.getUserInfoByToken(token);
-
+//                Map<String, String> userInfoByToken = jwtUtil.getUserInfoByToken(token);
+                TokenResponse userInfoByToken = jwtUtil.getUserInfoByToken(token);
+                log.info(userInfoByToken.getUserId());
                 //dapet user detail karena appuser di entity udh ada kaitannya dengan user detail
-                UserDetails appUser = userCredentialService.loadById(userInfoByToken.get("userId"));
+//                UserDetails appUser = userCredentialService.loadById(userInfoByToken.get("userId"));
+                AppUser appUser = userCredentialService.loadById(userInfoByToken.getUserId());
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
                         appUser,
                         null,

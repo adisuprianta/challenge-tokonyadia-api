@@ -22,12 +22,15 @@ public class AppUser implements UserDetails {
     private String id;
     private String username;
     private String password;
-    private ERole role;
+    private List<ERole> roles;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<SimpleGrantedAuthority> simpleGrantedAuthorities = new ArrayList<>();
-        simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role.name()));
+        roles.forEach(role -> {
+            simpleGrantedAuthorities.add(new SimpleGrantedAuthority(role.name()));
+        });
+
         return simpleGrantedAuthorities;
     }
 

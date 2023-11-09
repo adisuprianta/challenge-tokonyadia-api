@@ -18,4 +18,5 @@ public class CustomerResponse {
     private String address;
     private Date date;
 
+
 }

@@ -74,20 +74,18 @@ public class ProductImageServiceImpl implements ProductImageService {
     @Transactional(readOnly = true)
     @Override
     public Resource getMenuImageById(String id) {
-        try {
-
-            ProductImage productImage = productImageRepository.getReferenceById(id);
-            Path filepath = Paths.get(productImage.getPath());
-            return new UrlResource(filepath.toUri());
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
+        ProductImage productImage = productImageRepository.findById(id).orElseThrow(
+                ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"image not found")
+        );
+        return findByPath(productImage.getPath());
     }
 
     @Override
     public void delete(String id) {
         try{
-            ProductImage productImage = productImageRepository.getReferenceById(id);
+            ProductImage productImage = productImageRepository.findById(id).orElseThrow(
+                    ()-> new ResponseStatusException(HttpStatus.NOT_FOUND,"image not found")
+            );
             productImageRepository.delete(productImage);
             Path filePath = Paths.get(productImage.getPath());
             Files.deleteIfExists(filePath);

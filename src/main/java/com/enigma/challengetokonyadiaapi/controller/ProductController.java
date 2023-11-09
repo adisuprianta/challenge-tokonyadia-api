@@ -61,6 +61,7 @@ public class ProductController {
                 .status(HttpStatus.CREATED)
                 .body(response);
     }
+    @PreAuthorize("hasAnyRole('CUSTOMER','ADMIN','SELLER')")
     @GetMapping("/{id}/image")
     public ResponseEntity<?> downloadProductImage(@PathVariable String id){
         Resource resource = productImageService.getMenuImageById(id);
@@ -69,6 +70,7 @@ public class ProductController {
                 .header(HttpHeaders.CONTENT_DISPOSITION,headerValues)
                 .body(resource);
     }
+    @PreAuthorize("hasAnyRole('ADMIN','SELLER','CUSTOMER')")
     @GetMapping
     public  ResponseEntity<?> getAllProduct(){
         List<ProductResponse> responses = productService.findAll();
@@ -80,6 +82,7 @@ public class ProductController {
                         .data(responses)
                         .build());
     }
+    @PreAuthorize("hasAnyRole('ADMIN','SELLER')")
     @DeleteMapping("/{id}")
     public  ResponseEntity<?> delete(@PathVariable String id){
         productService.delete(id);
