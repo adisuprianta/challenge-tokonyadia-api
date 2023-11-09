@@ -82,6 +82,19 @@ public class ProductController {
                         .data(responses)
                         .build());
     }
+
+    @PreAuthorize("hasAnyRole('ADMIN','SELLER')")
+    @DeleteMapping("/{id}/image")
+    public ResponseEntity<?> deleteImage(@PathVariable String id){
+        productImageService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(CommonResponse.builder()
+                        .message("Successfully delete product")
+                        .statusCode(HttpStatus.OK.value())
+                        .build()
+                );
+    }
+
     @PreAuthorize("hasAnyRole('ADMIN','SELLER')")
     @DeleteMapping("/{id}")
     public  ResponseEntity<?> delete(@PathVariable String id){

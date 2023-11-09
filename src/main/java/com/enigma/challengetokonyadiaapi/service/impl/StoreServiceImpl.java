@@ -56,6 +56,10 @@ public class StoreServiceImpl implements StoreService {
         Store store = storeRepository.findById(id).orElseThrow(()->
                 new ResponseStatusException(HttpStatus.NOT_FOUND,"Store Not Found")
         );
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser principal = (AppUser) authentication.getPrincipal();
+        if (!principal.getId().equals(store.getCustomer().getUserCredential().getId())) throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"author");
+
         return StoreResponse.builder()
                 .id(store.getId())
                 .address(store.getAddress())

@@ -6,16 +6,15 @@ import com.enigma.challengetokonyadiaapi.dto.response.CustomerResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.ProductResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.TransactionDetailResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.TransactionResponse;
-import com.enigma.challengetokonyadiaapi.entity.Customer;
-import com.enigma.challengetokonyadiaapi.entity.Product;
-import com.enigma.challengetokonyadiaapi.entity.Transaction;
-import com.enigma.challengetokonyadiaapi.entity.TransactionDetail;
+import com.enigma.challengetokonyadiaapi.entity.*;
 import com.enigma.challengetokonyadiaapi.repository.TransactionRepository;
 import com.enigma.challengetokonyadiaapi.service.CustomerService;
 import com.enigma.challengetokonyadiaapi.service.ProductService;
 import com.enigma.challengetokonyadiaapi.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -76,6 +75,11 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = transactionRepository.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "transaction not found")
         );
+        String idCredential = transaction.getCustomer().getUserCredential().getId();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser principal = (AppUser) authentication.getPrincipal();
+
+        if (principal.getId().equals(idCredential)) throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"authorization");
 
         CustomerResponse customerResponse = getCustomerResponse(transaction);
 

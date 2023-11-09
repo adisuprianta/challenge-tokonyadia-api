@@ -4,6 +4,7 @@ import com.enigma.challengetokonyadiaapi.dto.request.ProductRequest;
 import com.enigma.challengetokonyadiaapi.dto.response.FileResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.ProductResponse;
 import com.enigma.challengetokonyadiaapi.dto.response.StoreResponse;
+import com.enigma.challengetokonyadiaapi.entity.AppUser;
 import com.enigma.challengetokonyadiaapi.entity.Product;
 import com.enigma.challengetokonyadiaapi.entity.ProductImage;
 import com.enigma.challengetokonyadiaapi.entity.Store;
@@ -15,6 +16,8 @@ import com.enigma.challengetokonyadiaapi.util.ValidationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.event.TransactionPhase;
@@ -54,6 +57,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse findById(String id) {
         Product product = getProductOrElseThrow(id);
 
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser principal = (AppUser) authentication.getPrincipal();
+        String userId = product.getStore().getCustomer().getUserCredential().getId();
+        if (!principal.getId().equals(userId)) throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"author");
+
         return ProductResponse.builder()
                 .id(product.getId())
                 .stock(product.getStock())
@@ -67,6 +75,12 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse udpate(ProductRequest request) {
         validationUtil.validate(request);
         Product product = getProductOrElseThrow(request.getId());
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        AppUser principal = (AppUser) authentication.getPrincipal();
+        String userId = product.getStore().getCustomer().getUserCredential().getId();
+        if (!principal.getId().equals(userId)) throw  new ResponseStatusException(HttpStatus.BAD_REQUEST,"author");
+
+
         product.setStock(request.getStock());
         product.setDescription(request.getDescription());
         product.setName(request.getName());
